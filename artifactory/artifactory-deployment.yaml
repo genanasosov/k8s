@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artifactory-deployment
+  namespace: artifactory # Укажите ваш namespace здесь
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artifactory
+  template:
+    metadata:
+      labels:
+        app: artifactory
+    spec:
+      containers:
+      - name: artifactory
+        image: releases-docker.jfrog.io/jfrog/artifactory-oss:latest      # Используем образ Artifctory
+        ports:
+        - containerPort: 8081           # Порт для Artifactory внутри контейнера
+        env:
+        - name: ARTIFACTORY_HOME
+          value: /var/opt/jfrog/artifactory
+        volumeMounts:
+        - name: artifactory-pv
+          mountPath: var/opt/jfrog/artifactory  # Путь, куда монтируется Volume
+        resources:
+          requests:                     # Запрашиваемые ресурсы
+            memory: "512Mi"             # Минимальное количество памяти
+            cpu: "500m"                 # Минимальное количество CPU
+          limits:                       # Лимиты ресурсов
+            memory: "1Gi"               # Максимальное количество памяти
+            cpu: "1000m"                # Максимальное количество CPU
+      volumes:
+      - name: artifactory-pv
+        persistentVolumeClaim:
+          claimName: artifactory-pvc         # Связываем с PVC

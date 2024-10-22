@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-deployment
+  namespace: jenkins # Укажите ваш namespace здесь
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+      - name: jenkins
+        image: jenkins/jenkins:lts      # Используем образ Jenkins
+        ports:
+        - containerPort: 8080           # Порт для Jenkins внутри контейнера
+        volumeMounts:
+        - name: jenkins-pv
+          mountPath: /var/jenkins_home  # Путь, куда монтируется Volume
+        resources:
+          requests:                     # Запрашиваемые ресурсы
+            memory: "512Mi"             # Минимальное количество памяти
+            cpu: "500m"                 # Минимальное количество CPU
+          limits:                       # Лимиты ресурсов
+            memory: "1Gi"               # Максимальное количество памяти
+            cpu: "1000m"                # Максимальное количество CPU
+      volumes:
+      - name: jenkins-pv
+        persistentVolumeClaim:
+          claimName: jenkins-pvc         # Связываем с PVC

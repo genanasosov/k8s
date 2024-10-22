@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: artifactory-pv
+spec:
+  capacity:
+    storage: 50Gi  # Укажите нужный объем
+  accessModes:
+    - ReadWriteOnce  # Режим доступа
+  hostPath:
+    path: /var/lib/docker/volumes/Artifactory/_data  # Путь к Docker Volume

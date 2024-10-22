@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: artifactory-service
+  namespace: artifactory  # Указание namespace
+spec:
+  type: NodePort                       # Используем NodePort для доступа с хоста
+  ports:
+    - port: 8081                       # Внутренний порт
+      targetPort: 8081                 # Порт Artifactory в контейнере
+      nodePort: 32001                  # Порт, который будет открыт на локальной машине
+  selector:
+    app: artifactory
